@@ -1,14 +1,13 @@
 package com.example.booksearchcompany.bestseller
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.booksearchcompany.BuildConfig
-import com.example.booksearchcompany.R
-import com.example.booksearchcompany.RetrofitObject
-import com.example.booksearchcompany.RetrofitServices
+import com.example.booksearchcompany.*
 import com.example.booksearchcompany.bestseller.model.BestSellerItem
 import com.example.booksearchcompany.databinding.FragmentBestsellerBinding
 import com.example.booksearchcompany.databinding.FragmentMypageBinding
@@ -41,7 +40,15 @@ class BestSellerFragment : Fragment(R.layout.fragment_bestseller){
             .client(buildOkHttpClient())
             .build()
 
-        bestSellerAdaptet = BestSellerAdapter()
+        bestSellerAdaptet = BestSellerAdapter(bookItemClick = { item ->
+            Toast.makeText(activity, "${item.title}", Toast.LENGTH_SHORT).show()
+            val intent = Intent(activity, BookDetailActivity::class.java)
+            intent.putExtra("title",item.title)
+            intent.putExtra("imageCover", item.cover)
+            startActivity(intent)
+        })
+
+        fragmentBestSellerBinding.bestSellerRecyclerView.adapter = bestSellerAdaptet
         fragmentBestSellerBinding.bestSellerRecyclerView.layoutManager = LinearLayoutManager(activity)
 
         val retrofitService = retrofit.create(RetrofitServices::class.java)
@@ -51,11 +58,10 @@ class BestSellerFragment : Fragment(R.layout.fragment_bestseller){
                     val item = response.body()
                     val itemList = item?.item
 
-                    fragmentBestSellerBinding.bestSellerRecyclerView.adapter = bestSellerAdaptet
                     bestSellerAdaptet.submitList(itemList)
 
                     itemList?.forEach {
-                        Log.d("itemList","$it")
+                        Log.d("itemList best","$it")
                     }
 
                 }

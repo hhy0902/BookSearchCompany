@@ -1,4 +1,4 @@
-package com.example.booksearchcompany.bestseller
+package com.example.booksearchcompany.search
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.booksearchcompany.R
-import com.example.booksearchcompany.bestseller.model.Item
+import com.example.booksearchcompany.search.model.Item
 
-class BestSellerAdapter(val bookItemClick : (Item) -> Unit) : ListAdapter<Item, BestSellerAdapter.ViewHolder>(differ) {
+class SearchBookAdapter : ListAdapter<Item, SearchBookAdapter.ViewHolder> (differ) {
 
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
 
@@ -44,16 +44,12 @@ class BestSellerAdapter(val bookItemClick : (Item) -> Unit) : ListAdapter<Item, 
             Glide.with(coverImage.context)
                 .load(item.cover)
                 .into(coverImage)
-
-            itemView.setOnClickListener {
-                bookItemClick(item)
-            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return ViewHolder(inflater.inflate(R.layout.bestseller_item, parent, false))
+        return ViewHolder(inflater.inflate(R.layout.searchbook_item, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -74,7 +70,6 @@ class BestSellerAdapter(val bookItemClick : (Item) -> Unit) : ListAdapter<Item, 
     }
 
 }
-
 
 
 
