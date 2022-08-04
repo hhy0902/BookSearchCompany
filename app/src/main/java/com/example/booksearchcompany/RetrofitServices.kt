@@ -11,13 +11,17 @@ import retrofit2.http.Query
 
 interface RetrofitServices {
 
-    @GET("ttb/api/ItemList.aspx?ttbkey=ttbhhy090200921001&QueryType=Bestseller&MaxResults=200&start=1&SearchTarget=Book&output=JS&Version=20131101")
-    fun getBestSellerItem(): Call<BestSellerItem>
+    @GET("ttb/api/ItemList.aspx?ttbkey=ttbhhy090200921001&QueryType=Bestseller&MaxResults=100&SearchTarget=Book&output=JS&Version=20131101")
+    fun getBestSellerItem(
+        @Query("start") start : String
+    ): Call<BestSellerItem>
 
-    @GET("ttb/api/ItemList.aspx?ttbkey=ttbhhy090200921001&QueryType=ItemNewSpecial&MaxResults=200&start=1&SearchTarget=Book&output=JS&Version=20131101")
-    fun getNewBookItem(): Call<NewBookItem>
+    @GET("ttb/api/ItemList.aspx?ttbkey=ttbhhy090200921001&QueryType=ItemNewSpecial&MaxResults=100&SearchTarget=Book&output=JS&Version=20131101")
+    fun getNewBookItem(
+        @Query("start") start : String
+    ): Call<NewBookItem>
 
-    @GET("ttb/api/ItemSearch.aspx?ttbkey=ttbhhy090200921001&MaxResults=200&SearchTarget=Book&output=JS&Version=20131101")
+    @GET("ttb/api/ItemSearch.aspx?ttbkey=ttbhhy090200921001&MaxResults=100&SearchTarget=Book&output=JS&Version=20131101")
     fun getSearchBookItem(
         @Query("Query") Query : String,
         @Query("start") start : String

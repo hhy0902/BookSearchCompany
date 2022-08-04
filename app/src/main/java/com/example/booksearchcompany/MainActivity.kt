@@ -13,11 +13,13 @@ import com.example.booksearchcompany.newbook.NewBookFragment
 import com.example.booksearchcompany.search.SearchFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
     private val auth : FirebaseAuth = Firebase.auth
+    private val db = Firebase.firestore
 
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)

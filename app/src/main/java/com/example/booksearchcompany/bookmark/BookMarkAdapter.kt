@@ -1,8 +1,9 @@
-package com.example.booksearchcompany.search
+package com.example.booksearchcompany.bookmark
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -10,21 +11,23 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.booksearchcompany.R
-import com.example.booksearchcompany.search.model.Item
+import com.example.booksearchcompany.bookmark.model.BookMarkItem
 
-class SearchBookAdapter(val searchBookClick : (Item) -> Unit) : ListAdapter<Item, SearchBookAdapter.ViewHolder> (differ) {
+class BookMarkAdapter(val bookMarkButtonClick : (BookMarkItem) -> Unit) : ListAdapter<BookMarkItem, BookMarkAdapter.ViewHolder> (differ) {
 
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(item : Item) {
+        fun bind(item: BookMarkItem) {
             val coverImage = itemView.findViewById<ImageView>(R.id.coverImage)
             val title = itemView.findViewById<TextView>(R.id.titleTextView)
             val author = itemView.findViewById<TextView>(R.id.authorTextView)
             val priceSales = itemView.findViewById<TextView>(R.id.priceSalesTextView)
             val customerReviewRank = itemView.findViewById<TextView>(R.id.customerReviewRankTextView)
+            val bookMarkButton = itemView.findViewById<Button>(R.id.bookMarkButton)
+
 
             title.text = "[${item.categoryName?.split(">")?.get(0)}] " + item.title
-            author.text = item.author + " | " + item.publisher + " | " + item.pubDate
+            author.text = item.author + " | " + item.publisher + " | " + item.date
             priceSales.text = item.priceStandard.toString()+"원" + " → " + item.priceSales.toString()+"원"
 
             when(item.customerReviewRank) {
@@ -45,28 +48,32 @@ class SearchBookAdapter(val searchBookClick : (Item) -> Unit) : ListAdapter<Item
                 .load(item.cover)
                 .into(coverImage)
 
-            itemView.setOnClickListener {
-                searchBookClick(item)
+            bookMarkButton.setOnClickListener {
+                bookMarkButtonClick(item)
             }
+
+
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return ViewHolder(inflater.inflate(R.layout.searchbook_item, parent, false))
+        return ViewHolder(inflater.inflate(R.layout.bookmark_item, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(currentList.get(position))
     }
 
+
     companion object {
-        val differ = object : DiffUtil.ItemCallback<Item>() {
-            override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
-                return oldItem.isbn == newItem.isbn
+        val differ = object : DiffUtil.ItemCallback<BookMarkItem>() {
+            override fun areItemsTheSame(oldItem: BookMarkItem, newItem: BookMarkItem): Boolean {
+                return oldItem.title == newItem.title
             }
 
-            override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
+            override fun areContentsTheSame(oldItem: BookMarkItem, newItem: BookMarkItem): Boolean {
                 return oldItem == newItem
             }
 
@@ -74,9 +81,6 @@ class SearchBookAdapter(val searchBookClick : (Item) -> Unit) : ListAdapter<Item
     }
 
 }
-
-
-
 
 
 

@@ -1,10 +1,14 @@
 package com.example.booksearchcompany.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.View.VISIBLE
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.booksearchcompany.BookDetailActivity
 import com.example.booksearchcompany.BuildConfig
 import com.example.booksearchcompany.R
 import com.example.booksearchcompany.RetrofitServices
@@ -32,24 +36,44 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
         val fragmentSearchBinding = FragmentSearchBinding.bind(view)
 
-        searchBookAdaptet = SearchBookAdapter()
+        searchBookAdaptet = SearchBookAdapter(searchBookClick = { item ->
+            Toast.makeText(activity, "${item.title}", Toast.LENGTH_SHORT).show()
+            val intent = Intent(activity, BookDetailActivity::class.java)
+            intent.putExtra("title",item.title)
+            intent.putExtra("imageCover", item.cover)
+            intent.putExtra("author",item.author)
+            intent.putExtra("date",item.pubDate)
+            startActivity(intent)
+        })
         fragmentSearchBinding.searchRecyclerView.layoutManager = LinearLayoutManager(activity)
         fragmentSearchBinding.searchRecyclerView.adapter = searchBookAdaptet
 
         fragmentSearchBinding.searchButton.setOnClickListener {
             val searchText = fragmentSearchBinding.searchEditText.text.toString()
             searchBook(searchText)
+            fragmentSearchBinding.rightButton.visibility = VISIBLE
+            fragmentSearchBinding.leftButton.visibility = VISIBLE
         }
 
         fragmentSearchBinding.leftButton.setOnClickListener {
-            start--
             val searchText = fragmentSearchBinding.searchEditText.text.toString()
-            searchBook(searchText)
+            if (start > 1) {
+                start = start - 1
+                searchBook(searchText)
+            } else {
+                start == 1
+                Toast.makeText(activity, "첫 페이지 입니다. ", Toast.LENGTH_SHORT).show()
+            }
         }
         fragmentSearchBinding.rightButton.setOnClickListener {
-            start++
             val searchText = fragmentSearchBinding.searchEditText.text.toString()
-            searchBook(searchText)
+            if (start < 4) {
+                start = start + 1
+                searchBook(searchText)
+            } else {
+                start == 4
+                Toast.makeText(activity, "마지막 페이지 입니다. ", Toast.LENGTH_SHORT).show()
+            }
         }
 
 
@@ -68,10 +92,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 val itemList = item?.item
 
                 searchBookAdaptet.submitList(itemList)
-
-                itemList?.forEach {
-                    Log.d("itemList search","$it")
-                }
 
             }
 
