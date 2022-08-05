@@ -1,5 +1,7 @@
 package com.example.booksearchcompany
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +22,8 @@ class BookDetailActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityBookDetailBinding.inflate(layoutInflater)
     }
+
+    private var bookMarkCheck = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +46,23 @@ class BookDetailActivity : AppCompatActivity() {
         binding.authorTextview.text = author.toString()
         binding.publisherTextview.text = publisher
         binding.dateTextview.text = date
-        binding.priceSalesTextView.text = priceSales.toString()
-        binding.priceStandardTextview.text = priceStandard.toString()
+        binding.priceSalesTextView.text = "판매가 : " + priceSales.toString()
+        binding.priceStandardTextview.text = "정가 : " + priceStandard.toString()
+        binding.isbnTextView.text = "isnb : ${isbn13}"
+        binding.categoryName.text = "카테고리 : ${categoryName}"
+        binding.descriptionTextView.text = description
+
+        try {
+            binding.go.setOnClickListener {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.setData(Uri.parse("$link"))
+                startActivity(intent)
+            }
+        } catch (e : Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "링크가 이상합니다.", Toast.LENGTH_SHORT).show()
+        }
+
         when(customerReviewRank) {
             10 -> binding.customerReviewRankTextView.text = "⭐⭐⭐⭐⭐"
             9 -> binding.customerReviewRankTextView.text = "⭐⭐⭐⭐"
@@ -64,9 +83,26 @@ class BookDetailActivity : AppCompatActivity() {
             .fitCenter()
             .into(binding.coverImage)
 
+        Thread {
+            db.collection("${auth.currentUser?.uid}bookMark").document("$author$title").get().addOnSuccessListener { document ->
+                Log.d("document", "${document.get("title")}")
+                Log.d("document", "${document.get("author")}")
+                Log.d("document", "${document.get("date")}")
+                if (document.get("title") == title) {
+                    bookMarkCheck = true
+                }
+                Log.d("bookMarkCheck", "${bookMarkCheck}")
+                runOnUiThread {
+                    binding.checkbox.isChecked = bookMarkCheck
+                }
+            }
+        }.start()
+
         binding.checkbox.setOnCheckedChangeListener { buttonCheck, isChecked ->
             if (isChecked) {
-                Toast.makeText(this, "checked", Toast.LENGTH_SHORT).show()
+                if (bookMarkCheck != true) {
+                    Toast.makeText(this, "북마크 ", Toast.LENGTH_SHORT).show()
+                }
                 val bookInfo = hashMapOf(
                     "title" to title,
                     "author" to author,
@@ -78,31 +114,22 @@ class BookDetailActivity : AppCompatActivity() {
                     "priceSales" to priceSales,
                     "categoryName" to categoryName
                 )
-
 //                add는 중복해서 만들어져서 안됨
 //                db.collection("bookMark").add(bookInfo).addOnSuccessListener {
 //                    Log.d("firestore user", "${it.id}")
 //                }
                 db.collection("${auth.currentUser?.uid}bookMark").document(
                     "$author$title").set(bookInfo).addOnSuccessListener {
-
                 }
 
-//                db.collection("bookMark").document("$title").get().addOnSuccessListener { document ->
-//                    Log.d("document", "${document.get("title")}")
-//                    Log.d("document", "${document.get("author")}")
-//                    Log.d("document", "${document.get("date")}")
-//                }
-//
-//                db.collection("bookMark").get().addOnSuccessListener {
-//                    for(document in it) {
-//                        Log.d("bookMark", "${document.data.getValue("title")}")
-//                    }
-//
-//                }
-
             } else {
-                Toast.makeText(this, "unChecked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "북마크 제거 ", Toast.LENGTH_SHORT).show()
+
+                db.collection("${auth.currentUser?.uid}bookMark").document("${author}${title}")
+                    .delete()
+                    .addOnSuccessListener {
+                        Log.d("delete", "DocumentSnapshot successfully deleted!")
+                    }
             }
         }
 

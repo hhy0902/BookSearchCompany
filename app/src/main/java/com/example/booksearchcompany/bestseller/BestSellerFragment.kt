@@ -37,7 +37,6 @@ class BestSellerFragment : Fragment(R.layout.fragment_bestseller){
         Log.d("BestSellerFragment", "BestSellerFragment")
 
         bestSellerAdaptet = BestSellerAdapter(bookItemClick = { item ->
-            Toast.makeText(activity, "${item.title}", Toast.LENGTH_SHORT).show()
             val intent = Intent(activity, BookDetailActivity::class.java)
             intent.putExtra("title",item.title)
             intent.putExtra("imageCover", item.cover)

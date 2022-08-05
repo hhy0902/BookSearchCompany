@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.booksearchcompany.bestseller.BestSellerFragment
 import com.example.booksearchcompany.bookmark.BookMarkFragment
 import com.example.booksearchcompany.databinding.ActivityMainBinding
@@ -39,7 +40,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId) {
-                R.id.myPage -> replaceFragment(mypageFragment)
+                R.id.myPage -> {
+                    replaceFragment(mypageFragment)
+                }
                 R.id.bestSeller -> replaceFragment(bestSellerFragment)
                 R.id.bookMark -> replaceFragment(bookMarkFragment)
                 R.id.newBook -> replaceFragment(newBookFragment)
